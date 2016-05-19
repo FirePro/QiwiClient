@@ -153,7 +153,7 @@ switch ($response->getState()) {
 
 QiwiPayStates::NEED_SMS: 
 
-$smsCode = "Здесь полученный SMS код";
+    $smsCode = "Здесь полученный SMS код";
     $confirmResponse = $client->confirmPay($response->getId(), $smsCode);
     
     if ($confirmResponse->getState()==QiwiPayStates::DONE) {
@@ -174,8 +174,6 @@ QiwiPayStates::FAILED:
     echo "Произошли ошибки при выполнении платежа!";
     var_dump($response->getErrors()):
 }
-
-
 
 ?>
 
