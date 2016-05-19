@@ -133,7 +133,7 @@ $client->payInvoice();
 
 ###Перевод средств на другой кошелек
 
-```
+```PHP
 <?php
 
 $client = new QiwiClient("+7903000000", "test");
@@ -143,6 +143,9 @@ $request = new QiwiWalletPay("+79030172919");
 $request->setAmount(1);
 $request->setCurrency("RUB");
 $request->setComment("test invoice");
+
+//Вы можете подключить EventListener, наследуемый от интерфейса Firepro/Qiwi/PayEventListener 
+//$request->setEventListener(new MyEventListener())
 
 $response = $client->pay($request);
 
@@ -177,4 +180,5 @@ QiwiPayStates::FAILED:
 ?>
 
 ```
+
 
