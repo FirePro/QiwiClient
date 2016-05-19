@@ -11,12 +11,20 @@
 
 Установка с использованием менеджера пакетов [Composer](http://getcomposer.org):
 
-```
+Вносим изменения в composer.json:
+
+```json
 { 
     "require": {
         "firepro/qiwiclient": "*"
     }
 }
+```
+
+Установка через require:
+
+```bash
+$ composer require firepro/qiwiclient
 ```
 
 ##Возможности
@@ -36,13 +44,17 @@
 
 Для начала работы необходимо создать экземпляр класса QiwiClient, в который передать по умолчанию $login и $password.
 
-``$client = new QiwiClient($login, $password);``
+```php
+$client = new QiwiClient($login, $password);
+```
 
 ###Авторизация
 
 Теперь для осуществления дальнейших действий необходимо вызвать функцию authorize;
 
-``$client->authorize();``
+```php
+$client->authorize();
+```
 
 Скрипт выполнит авторизацию в системе и запишет в память все требуемые куки для осуществления дальнейших операций
 
@@ -58,7 +70,9 @@
 
 Далее, передать данный обьект в метод pay:
 
-``$client->pay(QiwiPayRequest $request)``
+```php
+$client->pay(QiwiPayRequest $request)
+```
 
 После передачи параметра, Вам вернется экземпляр класса QiwiPayResponse, который будет в себе содержать 
 
@@ -72,7 +86,9 @@
 
 Для того, чтобы завершить платеж, вызовите метод confirm(int $id, int $code);
 
-``$client->confirm($id, $code);``
+```php 
+$client->confirm($id, $code);
+```
 
 ###Получение истории платежей
 
@@ -92,7 +108,9 @@
 
 Для того, чтобы найти платеж по комментарию, вызовите метод findInvoice и передайте в него комментарий, по которому нужно найти платеж. Производится получение первого доступного платежа с данным комментарием.
 
-``$client->findInvoice($comment);``
+```php 
+$client->findInvoice($comment);
+```
 
 Возвращаемый обьект Invoice, который содержит в себе всю требуемую информацию о платеже.
 
@@ -100,7 +118,9 @@
 
 Для получения баланса, необходимо вызвать метод getBalance()
 
-``$client->getBalance();``
+```
+$client->getBalance();
+```
 
 Вам вернется обьект QiwiBalance, который содержит в себе свойства:
 
