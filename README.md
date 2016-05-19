@@ -127,3 +127,51 @@ $client->listInvoices();
 ###Оплата входящего счета
 
 $client->payInvoice();
+
+##Экземпляры работы
+
+###Перевод средств на другой кошелек
+
+```
+<?php
+
+$client = new QiwiClient("+7903000000", "test");
+$client->authorize();
+
+$request = new QiwiWalletPay("+79030172919");
+$request->setAmount(1);
+$request->setCurrency("RUB");
+$request->setComment("test invoice");
+
+$response = $client->pay($request);
+
+switch ($response->getState()) {
+
+QiwiPayStates::NEED_SMS: 
+
+$smsCode = "Здесь полученный SMS код";
+    $confirmResponse = $client->confirmPay($response->getId(), $smsCode);
+    
+    if ($confirmResponse->getState()==QiwiPayStates::DONE) {
+        echo "Платеж успещно завершен";
+    } else {
+        var_dump($confirmResponse->getErrors()):
+    }
+    
+    break;
+    
+QiwiPayStates::DONE:
+    echo 'Платеж '.$response->getId().' успешно завершен'; 
+break;
+
+QiwiPayStates::FAILED:
+    echo "Произошли ошибки при выполнении платежа!";
+    var_dump($response->getErrors()):
+}
+
+
+
+?>
+
+```
+
