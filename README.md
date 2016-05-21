@@ -49,9 +49,39 @@ $client = new QiwiClient($login, $password, $provider);
 
 По умолчанию, provider - это CurlServiceProvider - он обеспечивает работу клиента через встроенную библиотеку Curl. 
 
-###Работа с запросами
+##Работа с запросами
 
 Для начала работы, необходимо понять структуру. Мы используем подход, в котором Client играет роль интерфейса запросов, а обьекты запросов предоставляют все необходимые данные для клиента. Это позволяет идти по лучшим практикам проектирования, не используя антипатерны (God Object)
+
+```php
+
+    $client = new Client(new CurlServiceProvider());
+
+    $request = new QiwiWalletPayRequest($client);
+    $request->setAccount("+79030132918");
+    $request->setAmount(1);
+    $request->setComment(1);
+    $request->execute();
+    
+    /**
+    * QiwiPayRequest возвращает QiwiPayResponse
+    **/
+    $response = $request->getResponse();
+    
+    echo 'Платеж '. $response->getId()." завершился со статусом ".$response->getState();
+```
+
+###Проведение платежей
+
+Для проведения платежей, существуют следующие классы:
+
+* QiwiWalletPayRequest - оплата на кошелек QIWI
+* CardPayRequest - оплата на банковскую карту
+* YandexMoneyPayRequest - Оплата на кошелек Яндекс.Деньги
+* PhonePayRequest - Оплата на счет мобильного телефона
+* WebmoneyPayRequest - Оплата на Webmoney
+
+####Проведение оплаты на QIWI кошелек.
 
 ```php
 
@@ -69,51 +99,71 @@ $client = new QiwiClient($login, $password, $provider);
     $response = $request->getResponse();
     
     echo 'Платеж '. $response->getId()." завершился со статусом ".$response->getState();
+```
+
+####Проведение оплаты на телефон
+
+```php
+
+    $client = new Client(new CurlServiceProvider());
+
+    $request = new QiwiWalletPay($client);
+    $request->setAccount("+79030132918");
+    $request->setAmount(1);
+    $request->setComment(1);
+    $request->execute();
     
+    /**
+    * QiwiPayRequest возвращает QiwiPayResponse
+    **/
+    $response = $request->getResponse();
+    
+    echo 'Платеж '. $response->getId()." завершился со статусом ".$response->getState();
 ```
 
-
-###Авторизация
-
-Теперь для осуществления дальнейших действий необходимо вызвать функцию authorize;
+####Проведение оплаты на банковскую карту
 
 ```php
-$client->authorize();
+
+    $client = new Client(new CurlServiceProvider());
+
+    $request = new QiwiWalletPay($client);
+    $request->setAccount("+79030132918");
+    $request->setAmount(1);
+    $request->setComment(1);
+    $request->execute();
+    
+    /**
+    * QiwiPayRequest возвращает QiwiPayResponse
+    **/
+    $response = $request->getResponse();
+    
+    echo 'Платеж '. $response->getId()." завершился со статусом ".$response->getState();
 ```
 
-Скрипт выполнит авторизацию в системе и запишет в память все требуемые куки для осуществления дальнейших операций
-
-###Совершение платежей
-
-Для создания платежа, необходимо создать экземпляр класса с назначением платежа.
-
-* QiwiWalletPay - оплата на кошелек QIWI
-* CardPay - оплата на банковскую карту
-* YandexMoneyPay - Оплата на кошелек Яндекс.Деньги
-* PhonePay - Оплата на счет мобильного телефона
-* WebmoneyPay - Оплата на Webmoney
-
-Далее, передать данный обьект в метод pay:
+### Подтверждение платежа
 
 ```php
-$client->pay(QiwiPayRequest $request)
+
+    $client = new Client(new CurlServiceProvider());
+
+    $request = new QiwiConfirmPayRequest($client);
+    $request->setId("+79030132918");
+    $request->setSmsCode(1);
+    $request->execute();
+    
+    /**
+    * QiwiPayRequest возвращает QiwiConfirmResponse
+    **/
+    $response = $request->getResponse();
+    
+    echo 'Платеж '. $response->getId()." завершился со статусом ".$response->getState();
 ```
 
-После передачи параметра, Вам вернется экземпляр класса QiwiPayResponse, который будет в себе содержать 
+##История и поиск платежа
 
-* Уникальный id созданного платежа
-* Статус платежа
-* Ошибки, если таковые произошли при выполнении запроса
+Для выполнения поиска и авторизации предусмотрены 
 
-Если статус платежа NEED_SMS, то необходимо выполнить следующий метод, необходимый для подтверждения платежа.
-
-###Подтверждение перевода через SMS
-
-Для того, чтобы завершить платеж, вызовите метод confirm(int $id, int $code);
-
-```php 
-$client->confirm($id, $code);
-```
 
 ###Получение истории платежей
 
