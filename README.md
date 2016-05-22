@@ -200,22 +200,21 @@ QiwiSearchInvoiceRequest
 
 ###Отключение SMS подтверждения
 
-Отключение подтверждения осуществляется классом QiwiDisableSmsRequest
+Отключение подтверждения осуществляется классом DisableSmsRequest
 
 ###Подтверждение отключения SMS
 
-Осуществляется классом QiwiConfirmDisableSmsRequest
+Осуществляется классом ConfirmDisableSmsRequest
 
 ##Работа с ваучерами
 
 ###Покупка ваучера
 
-Для покупки ваучера предусмотрен класс QiwiEggPayRequest
+Для покупки ваучера предусмотрен класс EggPayRequest
 
 ###Активация ваучера
 
-Для активации ваучера предусмотрен класс QiwiEggActivateRequest
-
+Для активации ваучера предусмотрен класс EggActivateRequest
 
 ##Экземпляры работы
 
@@ -227,22 +226,23 @@ QiwiSearchInvoiceRequest
 $client = new QiwiClient("+7903000000", "test");
 $client->authorize();
 
-$request = new QiwiWalletPay("+79030172919");
+$request = new QiwiWalletPay($client);
 $request->setAmount(1);
 $request->setCurrency("RUB");
 $request->setComment("test invoice");
-
-//Вы можете подключить EventListener, наследуемый от интерфейса Firepro/Qiwi/PayEventListener 
-//$request->setEventListener(new MyEventListener())
-
-$response = $client->pay($request);
+$response = $request->execute();
 
 switch ($response->getState()) {
 
 QiwiPayStates::NEED_SMS: 
 
     $smsCode = "Здесь полученный SMS код";
-    $confirmResponse = $client->confirmPay($response->getId(), $smsCode);
+    
+    $confirmRequest = new ConfirmPayRequest($client);
+    $confirmRequest->setId($response->getId());
+    $confirmRequest->setSmsCode($smsCode);
+    
+    $confirmResponse = $confirmRequest->execute();
     
     if ($confirmResponse->getState()==QiwiPayStates::DONE) {
         echo "Платеж успещно завершен";
